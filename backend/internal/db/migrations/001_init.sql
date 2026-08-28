@@ -8,20 +8,21 @@ CREATE TABLE IF NOT EXISTS clusters (
 CREATE TABLE IF NOT EXISTS resource_groups (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), name TEXT NOT NULL, cluster_ids TEXT[] NOT NULL DEFAULT '{}', node_type TEXT NOT NULL DEFAULT '',
  cpu_quota INTEGER NOT NULL DEFAULT 0, memory_quota_mb INTEGER NOT NULL DEFAULT 0, gpu_quota INTEGER NOT NULL DEFAULT 0, concurrency INTEGER NOT NULL DEFAULT 1, budget_tag TEXT NOT NULL DEFAULT '',
- created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(project_id,name)
+ created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(project_id,name), UNIQUE(project_id,id)
 );
 CREATE TABLE IF NOT EXISTS queues (
- id TEXT PRIMARY KEY, resource_group_id TEXT NOT NULL REFERENCES resource_groups(id), name TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 0, weight INTEGER NOT NULL DEFAULT 1, concurrency INTEGER NOT NULL DEFAULT 1, max_duration_seconds INTEGER NOT NULL DEFAULT 0, scheduling_policy TEXT NOT NULL DEFAULT 'fifo',
- created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(resource_group_id,name)
+ id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), resource_group_id TEXT NOT NULL REFERENCES resource_groups(id), name TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 0, weight INTEGER NOT NULL DEFAULT 1, concurrency INTEGER NOT NULL DEFAULT 1, max_duration_seconds INTEGER NOT NULL DEFAULT 0, scheduling_policy TEXT NOT NULL DEFAULT 'fifo',
+ created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(resource_group_id,name), UNIQUE(project_id,id)
 );
 CREATE TABLE IF NOT EXISTS asset_versions (
  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), asset_type TEXT NOT NULL, name TEXT NOT NULL, version TEXT NOT NULL, digest TEXT NOT NULL, checksum TEXT NOT NULL, uri TEXT NOT NULL, permissions JSONB NOT NULL DEFAULT '{}'::jsonb, source TEXT NOT NULL DEFAULT '',
  created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(project_id,name,version), UNIQUE(project_id,digest)
 );
 CREATE TABLE IF NOT EXISTS training_jobs (
- id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), name TEXT NOT NULL, template_version TEXT NOT NULL DEFAULT '', image_digest TEXT NOT NULL, code_version TEXT NOT NULL, dataset_version TEXT NOT NULL, resource_request JSONB NOT NULL DEFAULT '{}'::jsonb, queue_id TEXT NOT NULL REFERENCES queues(id), state TEXT NOT NULL, output_uri TEXT NOT NULL DEFAULT '',
+ id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), name TEXT NOT NULL, template_version TEXT NOT NULL DEFAULT '', image_digest TEXT NOT NULL, code_version TEXT NOT NULL, dataset_version TEXT NOT NULL, resource_request JSONB NOT NULL DEFAULT '{}'::jsonb, queue_id TEXT NOT NULL, state TEXT NOT NULL, output_uri TEXT NOT NULL DEFAULT '',
  created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), CHECK (state IN ('draft','pending_validation','queued','allocating','running','succeeded','failed','cancelled','stopped','timeout')), UNIQUE(project_id,name)
 );
+ALTER TABLE training_jobs ADD CONSTRAINT fk_training_queue_project FOREIGN KEY (project_id, queue_id) REFERENCES queues(project_id, id);
 CREATE TABLE IF NOT EXISTS training_job_assets (
  job_id TEXT NOT NULL REFERENCES training_jobs(id), asset_version_id TEXT NOT NULL REFERENCES asset_versions(id), PRIMARY KEY(job_id,asset_version_id)
 );

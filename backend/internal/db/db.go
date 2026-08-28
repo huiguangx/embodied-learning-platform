@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+
+	_ "github.com/lib/pq"
 )
 
 func Open(dsn string) (*sql.DB, error) {
@@ -20,7 +22,11 @@ func Migration() ([]byte, error) {
 	if !ok {
 		return nil, fmt.Errorf("cannot resolve migration path")
 	}
-	return os.ReadFile(filepath.Join(filepath.Dir(file), "migrations/001_init.sql"))
+	path := filepath.Join(filepath.Dir(file), "migrations/001_init.sql")
+	if _, err := os.Stat(path); err != nil {
+		path = "/migrations/001_init.sql"
+	}
+	return os.ReadFile(path)
 }
 
 func ApplyMigrations(db *sql.DB) error {
