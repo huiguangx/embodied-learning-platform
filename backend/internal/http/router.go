@@ -1,10 +1,14 @@
 package http
 
-import "github.com/gin-gonic/gin"
+import (
+ "github.com/gin-gonic/gin"
+ "eip-platform/backend/internal/auth"
+)
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
+	r.Use(auth.Middleware())
 	r.GET("/healthz", healthz)
 	return r
 }
