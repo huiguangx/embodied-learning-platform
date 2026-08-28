@@ -13,6 +13,7 @@ type AuthContext struct { UserID, ProjectID string; Role Role }
 
 func Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.URL.Path == "/healthz" { c.Next(); return }
 		user, project := c.GetHeader("X-User-ID"), c.GetHeader("X-Project-ID")
 		role := Role(c.GetHeader("X-Role"))
 		if os.Getenv("APP_ENV") == "development" {
