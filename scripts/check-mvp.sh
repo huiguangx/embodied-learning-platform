@@ -2,7 +2,7 @@
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 if command -v go >/dev/null 2>&1; then
-  (cd "$ROOT/backend" && go test ./...)
+  (cd "$ROOT/backend" && GOCACHE="${TMPDIR:-/tmp}/eip-go-cache" go test ./...)
 else
   echo "go not found; skipped backend tests" >&2
 fi
