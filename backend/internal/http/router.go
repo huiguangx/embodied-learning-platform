@@ -16,6 +16,7 @@ func NewRouter() *gin.Engine {
 	api.GET("/assets/objects", objects)
 	registerResourceRoutes(api)
 	registerJobRoutes(api)
+	registerDeliveryRoutes(api)
 	return r
 }
 
