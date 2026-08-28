@@ -10,6 +10,10 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Logger(), gin.Recovery())
 	r.Use(auth.Middleware())
 	r.GET("/healthz", healthz)
+	api := r.Group("/api/v1/projects/:projectId")
+	api.GET("/dashboard", dashboard)
+	api.GET("/assets/images", images)
+	api.GET("/assets/objects", objects)
 	return r
 }
 

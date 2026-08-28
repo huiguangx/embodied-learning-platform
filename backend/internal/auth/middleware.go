@@ -23,6 +23,7 @@ func Middleware() gin.HandlerFunc {
 		}
 		if user == "" || project == "" { c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"code":"UNAUTHENTICATED","message":"user and project context are required"}); return }
 		c.Set(ContextKey, AuthContext{UserID:user, ProjectID:project, Role:role})
+		if requested := c.Param("projectId"); requested != "" && requested != project { c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"code":"PROJECT_SCOPE_DENIED","message":"project access denied"}); return }
 		c.Next()
 	}
 }
