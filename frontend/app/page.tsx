@@ -1,7 +1,6 @@
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
-
-export default function Home() {
-  return (
+"use client";import {useEffect,useState} from "react";import {Shell} from "../components/shell";import {api} from "../lib/api";import type {Dashboard} from "../lib/types";
+export default function Home(){const [data,setData]=useState<Dashboard>();useEffect(()=>{api<Dashboard>('/dashboard').then(setData).catch(()=>{})},[]);return <Shell><div className="page"><h1>Dashboard</h1><p className="muted">Cluster overview</p><div className="metrics">{[['GPU utilization',data?.gpuUtilization],['Memory utilization',data?.memoryUtilization],['CPU utilization',data?.cpuUtilization],['Success rate',data?.successRate]].map(([k,v])=><div className="metric" key={k as string}><strong>{v??'-'}{v!=null?'%':''}</strong><span>{k}</span></div>)}</div><div className="panel"><h2>Cluster status</h2><p>{data?.clusterStatus??'Loading...'}</p><p className="muted">Tasks: {data?.totalTasks??'-'} total, {data?.weeklyTasks??'-'} this week</p></div></div></Shell>}
+/*
     <main className="shell">
       <aside className="sidebar">
         <div className="brand">EIP</div>
@@ -29,4 +28,4 @@ export default function Home() {
       </section>
     </main>
   );
-}
+}*/

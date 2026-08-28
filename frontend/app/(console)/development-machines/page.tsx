@@ -1,0 +1,1 @@
+import {Shell} from "../../../components/shell";export default function Page(){return <Shell><div className="page"><h1>Development Machines</h1><p className="muted">My development machines</p><DataEmpty/></div></Shell>};function DataEmpty(){return <div className="panel empty">No development machines</div>}

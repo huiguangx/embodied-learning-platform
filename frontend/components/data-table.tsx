@@ -1,0 +1,1 @@
+export function DataTable({headers,rows}:{headers:string[];rows:(string|number)[][]}){return <div className="table-wrap"><table><thead><tr>{headers.map(h=><th key={h}>{h}</th>)}</tr></thead><tbody>{rows.map((row,i)=><tr key={i}>{row.map((v,j)=><td key={j}>{v}</td>)}</tr>)}</tbody></table>{!rows.length&&<div className="empty">No data</div>}</div>}

@@ -1,0 +1,2 @@
+const base=process.env.NEXT_PUBLIC_API_BASE_URL??"http://localhost:8080";export const projectId="00000000-0000-0000-0000-000000000001";
+export async function api<T>(path:string,init?:RequestInit):Promise<T>{const r=await fetch(`${base}/api/v1/projects/${projectId}${path}`,{...init,headers:{"X-User-ID":"demo-user","X-Project-ID":projectId,...init?.headers}});if(!r.ok)throw new Error(`API ${r.status}`);return r.json()}
