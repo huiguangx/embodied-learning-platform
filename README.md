@@ -12,7 +12,9 @@ docker compose up --build
 - Health: <http://localhost:8080/healthz>
 - Console: <http://localhost:3000>
 
-The console reads `NEXT_PUBLIC_API_BASE_URL` and shows it in the shell.
+The console reads `NEXT_PUBLIC_API_BASE_URL`. The current scheduler, asset
+stores, and serving controller are local MVP adapters; no cloud, Kubernetes,
+registry, or object-storage control plane is contacted.
 
 ## Development checks
 
@@ -21,5 +23,11 @@ cd backend && go test ./...
 cd frontend && npm run build
 ```
 
-Task 1 intentionally includes only local runtime bootstrap: Gin health,
-configuration, graceful shutdown, a placeholder Next.js shell, and Compose.
+## Verification
+
+```sh
+./scripts/check-mvp.sh
+```
+
+The backend currently starts without a database connection; PostgreSQL
+migrations and seed data are available for the next persistence wiring step.
