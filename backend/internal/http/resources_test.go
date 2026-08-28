@@ -1,0 +1,5 @@
+package http
+
+import("net/http/httptest";"strings";"testing";"github.com/gin-gonic/gin")
+func TestEngineerCannotCreateResourceGroup(t *testing.T){gin.SetMode(gin.TestMode);r:=NewRouter();q:=httptest.NewRequest("POST","/api/v1/projects/p/resource-groups",strings.NewReader(`{"id":"rg"}`));q.Header.Set("Content-Type","application/json");q.Header.Set("X-User-ID","u");q.Header.Set("X-Project-ID","p");q.Header.Set("X-Role","engineer");w:=httptest.NewRecorder();r.ServeHTTP(w,q);if w.Code!=403{t.Fatalf("got %d",w.Code)}}
+func TestResourceCheck(t *testing.T){gin.SetMode(gin.TestMode);r:=NewRouter();q:=httptest.NewRequest("POST","/api/v1/projects/00000000-0000-0000-0000-000000000001/resource-checks",strings.NewReader(`{"resourceGroupId":"rg-cloud","gpu":1}`));q.Header.Set("Content-Type","application/json");q.Header.Set("X-User-ID","u");q.Header.Set("X-Project-ID","00000000-0000-0000-0000-000000000001");w:=httptest.NewRecorder();r.ServeHTTP(w,q);if w.Code!=200{t.Fatalf("got %d: %s",w.Code,w.Body.String())}}

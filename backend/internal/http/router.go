@@ -14,6 +14,7 @@ func NewRouter() *gin.Engine {
 	api.GET("/dashboard", dashboard)
 	api.GET("/assets/images", images)
 	api.GET("/assets/objects", objects)
+	registerResourceRoutes(api)
 	return r
 }
 
