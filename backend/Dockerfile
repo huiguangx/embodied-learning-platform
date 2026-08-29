@@ -1,8 +1,10 @@
 FROM golang:1.22-alpine AS build
 
+ARG GOPROXY=https://goproxy.cn,direct
+ENV GOPROXY=${GOPROXY}
 WORKDIR /src
 COPY go.mod go.sum* ./
-RUN go mod download
+RUN go mod download all
 COPY . .
 RUN go build -mod=mod -o /bin/eip-api ./cmd/server
 
